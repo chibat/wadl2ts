@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<application xmlns="http://wadl.dev.java.net/2009/02">
+    <doc xmlns:jersey="http://jersey.java.net/" jersey:generatedBy="Jersey: 2.15 2015-01-12 22:32:50"/>
+    <doc xmlns:jersey="http://jersey.java.net/" jersey:hint="This is simplified WADL with user and core resources only. To get full WADL with extended resources use the query parameter detail. Link: http://localhost:8080/application.wadl?detail=true"/>
+    <grammars>
+        <include href="../test/xsd0.xsd">
+            <doc title="Generated" xml:lang="en"/>
+        </include>
+    </grammars>
+    <resources base="">
+        <resource path="add">
+            <resource path="xml">
+                <method id="xml" name="GET">
+                    <request>
+                        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="arg1" style="query" type="xs:int"/>
+                        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="arg2" style="query" type="xs:int"/>
+                    </request>
+                    <response>
+                        <ns2:representation xmlns:ns2="http://wadl.dev.java.net/2009/02" xmlns="" element="result" mediaType="application/xml"/>
+                    </response>
+                </method>
+            </resource>
+            <resource path="json">
+                <method id="json" name="GET">
+                    <request>
+                        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="arg1" style="query" type="xs:int"/>
+                        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="arg2" style="query" type="xs:int"/>
+                    </request>
+                    <response>
+                        <ns2:representation xmlns:ns2="http://wadl.dev.java.net/2009/02" xmlns="" element="result" mediaType="application/json"/>
+                    </response>
+                </method>
+            </resource>
+        </resource>
+        <resource path="typeCheck">
+            <resource path="json">
+                <method id="json" name="GET">
+                    <response>
+                        <ns2:representation xmlns:ns2="http://wadl.dev.java.net/2009/02" xmlns="" element="BarName" mediaType="application/json"/>
+                    </response>
+                </method>
+            </resource>
+            <resource path="xml">
+                <method id="xml" name="GET">
+                    <response>
+                        <ns2:representation xmlns:ns2="http://wadl.dev.java.net/2009/02" xmlns="" element="BarName" mediaType="application/xml"/>
+                    </response>
+                </method>
+            </resource>
+        </resource>
+    </resources>
+</application>

@@ -1,0 +1,14 @@
+build.path.exportedFolder=
+build.path.sourceFolder=src
+compiler.codeGenTarget=ECMASCRIPT5
+compiler.compileOnSave=true
+compiler.generateDeclarationFiles=false
+compiler.mapSourceFiles=false
+compiler.moduleGenTarget=SYNCHRONOUS
+compiler.noEmitOnError=true
+compiler.noImplicitAny=true
+compiler.noLib=false
+compiler.outputDirOption=bin
+compiler.outputFileOption=
+compiler.removeComments=true
+eclipse.preferences.version=1
