@@ -90,7 +90,7 @@ function getTsByWadl(src: string): {wadlText: string; xsdPath: string} {
             result += indent(level) + '}\n';
         } else if (tagName === 'method') {
             level--;
-            result += 'callback: (response: ' + responseType + ') => void): void {\n';
+            result += 'callback: (response: ' + responseType + ') => void, options: AjaxOptions = {}): void {\n';
             var url = '';
             for (var i=0; i < level; i++) {
                 if (i !== 0) {
@@ -99,15 +99,20 @@ function getTsByWadl(src: string): {wadlText: string; xsdPath: string} {
                 url += paths[i];
             }
             var reasonTypeUnCap = uncapitalize(responseType);
-            result += indent(level+1) + `$.ajax({dataType: 'xml', type: '${method}', url: baseUri + '${url}', data: {${sendObjectString}}, success: (res: any)=>{callback(<${responseType}>((<any>x2js.xml2json(res)).${reasonTypeUnCap}));}});\n`;
+            result += indent(level+1) + `var settings = <JQueryAjaxSettings>options;\n`;
+            result += indent(level+1) + `settings.dataType = 'xml';\n`;
+            result += indent(level+1) + `settings.type = '${method}';\n`;
+            result += indent(level+1) + `settings.url = baseUri + '${url}';\n`;
+            result += indent(level+1) + `settings.data = {${sendObjectString}};\n`;
+            result += indent(level+1) + `settings.success = (res: any)=>{callback(<${responseType}>((<any>x2js.xml2json(res)).${reasonTypeUnCap}));};\n`;
+            result += indent(level+1) + `$.ajax(settings);\n`;
             result += indent(level) + '}\n';
         }
     }
 
     parser.write(src).close();
 
-    var xsdPath = baseUri + xsdIncludeHref;
-    return {wadlText: result, xsdPath: xsdPath};
+    return {wadlText: result, xsdPath: xsdIncludeHref};
 }
 
 function getTsByXsd(src: string): string {
@@ -144,6 +149,7 @@ function readResource(path: string): string {
     var ret: string = null;
 
     if ((/^https?:\/\//).test(path)) {
+        console.info(path);
         var res = request('GET', path);
         ret = res.getBody('UTF-8');
     } else {
@@ -154,13 +160,51 @@ function readResource(path: string): string {
 }
 
 var wadlSet = getTsByWadl(readResource(wadlUrl));
-var xsdText = getTsByXsd(readResource(wadlSet.xsdPath));
+var xsdPath: string = null;
+if ((/^https?:\/\//).test(wadlSet.xsdPath)) {
+    xsdPath = wadlUrl + wadlSet.xsdPath;
+} else {
+    xsdPath = wadlSet.xsdPath;
+}
+var xsdText = getTsByXsd(readResource(xsdPath));
 
 var text = `
 /// <reference path="typings/jquery/jquery.d.ts" />
 /// <reference path="typings/x2js/xml2json.d.ts" />
 
 module ${moduleName} {
+
+interface AjaxOptions {
+    accepts?: any;
+    async?: boolean;
+    beforeSend? (jqXHR: JQueryXHR, settings: JQueryAjaxSettings): any;
+    cache?: boolean;
+    complete? (jqXHR: JQueryXHR, textStatus: string): any;
+    contents?: { [key: string]: any; };
+    contentType?: any;
+    context?: any;
+    converters?: { [key: string]: any; };
+    crossDomain?: boolean;
+    dataFilter? (data: any, ty: any): any;
+    error? (jqXHR: JQueryXHR, textStatus: string, errorThrown: string): any;
+    global?: boolean;
+    headers?: { [key: string]: any; };
+    ifModified?: boolean;
+    isLocal?: boolean;
+    jsonp?: any;
+    jsonpCallback?: any;
+    mimeType?: string;
+    password?: string;
+    processData?: boolean;
+    scriptCharset?: string;
+    statusCode?: { [key: string]: any; };
+    timeout?: number;
+    traditional?: boolean;
+    type?: string;
+    username?: string;
+    xhr?: any;
+    xhrFields?: { [key: string]: any; };
+}
 
 ${xsdText}
 
